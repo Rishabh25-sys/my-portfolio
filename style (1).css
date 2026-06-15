@@ -3,145 +3,20 @@
     --accent: #00f2ff;
     --text: #ffffff;
     --font-head: 'Syne', sans-serif;
-    --font-body: 'Space Grotesk', sans-serif;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
-
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    height: 1000vh; /* Long track for the game */
-    overflow-x: hidden;
-}
-
-#canvas-container {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-}
-
-/* Loader Styles */
-#loader {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.loader-inner h2 {
-    font-family: var(--font-head);
-    font-size: 4rem;
-    letter-spacing: -2px;
-    margin-bottom: 2rem;
-}
-
-.progress-bar {
-    width: 200px;
-    height: 2px;
-    background: rgba(255,255,255,0.1);
-    margin: 0 auto 2rem;
-    position: relative;
-}
-
-#progress {
-    position: absolute;
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-}
-
-#start-btn {
-    background: none;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 1rem 3rem;
-    font-size: 0.8rem;
-    letter-spacing: 4px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; height: 1000vh; overflow-x: hidden; }
+#canvas-container { position: fixed; inset: 0; z-index: 1; }
+#loader { position: fixed; inset: 0; z-index: 1000; background: #000; display: flex; align-items: center; justify-content: center; text-align: center; }
+.loader-inner h2 { font-family: var(--font-head); font-size: 3rem; letter-spacing: -2px; margin-bottom: 2rem; }
+.progress-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin: 0 auto 2rem; position: relative; }
+#progress { position: absolute; height: 100%; background: var(--accent); width: 0%; }
+#start-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 1rem 3rem; font-size: 0.8rem; letter-spacing: 4px; cursor: pointer; transition: 0.3s; }
 #start-btn:hover { background: var(--accent); color: #000; }
-
-/* UI Layer */
-#game-ui {
-    position: relative;
-    z-index: 10;
-    pointer-events: none;
-}
-
-nav {
-    position: fixed;
-    top: 2rem;
-    width: 100%;
-    padding: 0 5%;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.milestone {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    padding-left: 10%;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.milestone-content {
-    max-width: 800px;
-}
-
-.label {
-    color: var(--accent);
-    font-size: 0.9rem;
-    letter-spacing: 5px;
-    display: block;
-    margin-bottom: 1rem;
-}
-
-h1 {
-    font-family: var(--font-head);
-    font-size: clamp(4rem, 15vw, 10rem);
-    line-height: 0.8;
-    letter-spacing: -5px;
-    margin-bottom: 2rem;
-}
-
-p {
-    font-size: 1.2rem;
-    max-width: 500px;
-    opacity: 0.6;
-}
-
-.controls-overlay {
-    position: fixed;
-    bottom: 2rem;
-    left: 5%;
-    display: flex;
-    gap: 2rem;
-    font-size: 0.6rem;
-    letter-spacing: 2px;
-    opacity: 0.3;
-}
-
-.connect-btn {
-    display: inline-block;
-    margin-top: 2rem;
-    padding: 1.5rem 4rem;
-    background: var(--accent);
-    color: #000;
-    text-decoration: none;
-    font-weight: 800;
-    letter-spacing: 2px;
-    pointer-events: auto;
-}
+#game-ui { position: relative; z-index: 10; pointer-events: none; }
+nav { position: fixed; top: 2rem; width: 100%; padding: 0 5%; display: flex; justify-content: space-between; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
+.milestone { height: 100vh; display: flex; align-items: center; padding-left: 10%; opacity: 0; pointer-events: none; }
+.label { color: var(--accent); font-size: 0.9rem; letter-spacing: 5px; display: block; margin-bottom: 1rem; }
+h1 { font-family: var(--font-head); font-size: clamp(3rem, 12vw, 8rem); line-height: 0.8; letter-spacing: -5px; margin-bottom: 2rem; }
+.controls-overlay { position: fixed; bottom: 2rem; left: 5%; display: flex; gap: 2rem; font-size: 0.6rem; letter-spacing: 2px; opacity: 0.3; }
+.connect-btn { display: inline-block; margin-top: 2rem; padding: 1.5rem 4rem; background: var(--accent); color: #000; text-decoration: none; font-weight: 800; letter-spacing: 2px; pointer-events: auto; }
