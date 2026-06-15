@@ -1,22 +1,66 @@
-:root {
-    --bg: #000000;
-    --accent: #00f2ff;
-    --text: #ffffff;
-    --font-head: 'Syne', sans-serif;
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000000, 0.04);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+// Environment
+const trackGroup = new THREE.Group();
+const gridHelper = new THREE.GridHelper(200, 50, 0x00f2ff, 0x111111);
+gridHelper.position.y = -2;
+trackGroup.add(gridHelper);
+scene.add(trackGroup);
+
+// Hero (Bike & Rider)
+function createHero() {
+    const group = new THREE.Group();
+    const bike = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.4, 1.2), new THREE.MeshStandardMaterial({ color: 0x222222 }));
+    bike.position.y = 0.5;
+    group.add(bike);
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.5, 0.2), new THREE.MeshStandardMaterial({ color: 0x000000 }));
+    torso.position.set(0, 0.9, -0.1); torso.rotation.x = -0.5;
+    group.add(torso);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 16), new THREE.MeshStandardMaterial({ color: 0x000000 }));
+    head.position.set(0, 1.2, 0.05);
+    group.add(head);
+    return group;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
-body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; height: 1000vh; overflow-x: hidden; }
-#canvas-container { position: fixed; inset: 0; z-index: 1; }
-#loader { position: fixed; inset: 0; z-index: 1000; background: #000; display: flex; align-items: center; justify-content: center; text-align: center; }
-.loader-inner h2 { font-family: var(--font-head); font-size: 3rem; letter-spacing: -2px; margin-bottom: 2rem; }
-.progress-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin: 0 auto 2rem; position: relative; }
-#progress { position: absolute; height: 100%; background: var(--accent); width: 0%; }
-#start-btn { background: none; border: 1px solid var(--accent); color: var(--accent); padding: 1rem 3rem; font-size: 0.8rem; letter-spacing: 4px; cursor: pointer; transition: 0.3s; }
-#start-btn:hover { background: var(--accent); color: #000; }
-#game-ui { position: relative; z-index: 10; pointer-events: none; }
-nav { position: fixed; top: 2rem; width: 100%; padding: 0 5%; display: flex; justify-content: space-between; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
-.milestone { height: 100vh; display: flex; align-items: center; padding-left: 10%; opacity: 0; pointer-events: none; }
-.label { color: var(--accent); font-size: 0.9rem; letter-spacing: 5px; display: block; margin-bottom: 1rem; }
-h1 { font-family: var(--font-head); font-size: clamp(3rem, 12vw, 8rem); line-height: 0.8; letter-spacing: -5px; margin-bottom: 2rem; }
-.controls-overlay { position: fixed; bottom: 2rem; left: 5%; display: flex; gap: 2rem; font-size: 0.6rem; letter-spacing: 2px; opacity: 0.3; }
-.connect-btn { display: inline-block; margin-top: 2rem; padding: 1.5rem 4rem; background: var(--accent); color: #000; text-decoration: none; font-weight: 800; letter-spacing: 2px; pointer-events: auto; }
+const hero = createHero();
+scene.add(hero);
+scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+const spot = new THREE.SpotLight(0x00f2ff, 5); spot.position.set(0, 5, 10); scene.add(spot);
+
+let targetScroll = 0, currentScroll = 0, mouseX = 0;
+window.addEventListener('wheel', (e) => { targetScroll += e.deltaY * 0.02; });
+window.addEventListener('mousemove', (e) => { mouseX = (e.clientX / window.innerWidth - 0.5) * 2; });
+
+document.getElementById('start-btn').addEventListener('click', () => {
+    gsap.to('#loader', { opacity: 0, pointerEvents: 'none', duration: 1 });
+});
+
+let prog = 0;
+const intv = setInterval(() => {
+    prog += 5; document.getElementById('progress').style.width = prog + '%';
+    if(prog >= 100) { clearInterval(intv); document.getElementById('start-btn').style.display = 'block'; }
+}, 30);
+
+function animate() {
+    requestAnimationFrame(animate);
+    currentScroll += (targetScroll - currentScroll) * 0.05;
+    hero.position.x = mouseX * 4;
+    hero.rotation.y = -mouseX * 0.3;
+    hero.rotation.z = mouseX * 0.4;
+    trackGroup.position.z = (currentScroll % 100);
+    camera.position.set(mouseX * 2, 2, 5);
+    camera.lookAt(hero.position.x, 1, -5);
+    renderer.render(scene, camera);
+}
+animate();
+
+gsap.registerPlugin(ScrollTrigger);
+gsap.utils.toArray('.milestone').forEach((m, i) => {
+    gsap.to(m, { scrollTrigger: { trigger: document.body, start: `${i * 25}% top`, end: `${(i+1) * 25}% top`, scrub: true,
+    onEnter: () => gsap.to(m, { opacity: 1, y: 0 }), onLeave: () => gsap.to(m, { opacity: 0, y: -50 }),
+    onEnterBack: () => gsap.to(m, { opacity: 1, y: 0 }), onLeaveBack: () => gsap.to(m, { opacity: 0, y: 50 }) } });
+});
